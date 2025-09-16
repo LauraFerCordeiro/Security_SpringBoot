@@ -1,0 +1,35 @@
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Service;
+
+import java.security.Key;
+import java.util.Date;
+
+@Service
+public class AuthService {
+
+    // chave secreta fixa (hardcoded)
+    private static final Key SECRET_KEY = Keys.hmacShaKeyFor("MinhaChaveSuperSecretaDe32Bytes!".getBytes());
+
+    public LoginResponseDTO login(LoginRequestDTO dto) {
+        // Usuário e senha fixos
+        if ("admin".equals(dto.username()) && "1234".equals(dto.password())) {
+            String token = generateToken(dto.username());
+            return new LoginResponseDTO(token, "Login realizado com sucesso!", true);
+        }
+        return new LoginResponseDTO(null, "Usuário ou senha inválidos", false);
+    }
+
+    private String generateToken(String username) {
+        long expiration = 1000 * 60 * 60; // 1 hora
+
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuer("MeuSistemaHardcode")
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
+                .compact();
+    }
+}
