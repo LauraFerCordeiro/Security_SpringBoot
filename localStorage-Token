@@ -1,0 +1,54 @@
+const token = localStorage.getItem("jwtToken");
+
+if (!token) {
+  // se não tiver token, volta pro login
+  window.location.href = "login.html";
+}
+
+//get
+  const response = await fetch(apiUrl, {
+    headers: { Authorization: "Bearer " + token }
+  });
+
+  if (!response.ok) {
+    alert("Token expirado ou inválido!");
+    localStorage.removeItem("jwtToken");
+    window.location.href = "login.html";
+    return;
+  }
+
+//post
+
+  await fetch(apiUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + token
+    },
+    body: JSON.stringify({ name })
+  });
+
+//delete
+ await fetch(`${apiUrl}/${id}`, {
+    method: "DELETE",
+    headers: { Authorization: "Bearer " + token }
+  });
+  fetchRooms();
+
+//put
+ await fetch(`${apiUrl}/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + token
+    },
+    body: JSON.stringify({ name: newName })
+  });
+  fetchRooms();
+}
+
+//logout
+function logout() {
+  localStorage.removeItem("jwtToken");
+  window.location.href = "login.html";
+}
