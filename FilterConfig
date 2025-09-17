@@ -19,3 +19,5 @@ public class FilterConfig {
         return registrationBean;
     }
 }
+
+// @SecurityRequirement(name = "bearerAuth") nos controllers
